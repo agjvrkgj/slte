@@ -1,0 +1,75 @@
+name: Desktop
+
+on:
+  pull_request:
+    paths:
+      - "desktopApp/**"
+      - "gradle/libs.versions.toml"
+      - "settings.gradle.kts"
+      - "build.gradle.kts"
+      - ".github/workflows/desktop.yml"
+  workflow_dispatch:
+  push:
+    tags:
+      - "desktop-v*"
+
+permissions:
+  contents: read
+
+jobs:
+  test:
+    name: Desktop tests
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+      - name: Run tests
+        run: ./gradlew --configure-on-demand :desktopApp:test
+
+  package:
+    name: Package ${{ matrix.name }}
+    needs: test
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - name: Windows x64
+            os: windows-latest
+            task: packageMsi
+            artifact: SLTE-Windows-x64
+            files: desktopApp/build/compose/binaries/main/msi/*.msi
+          - name: macOS Apple Silicon
+            os: macos-15
+            task: packageDmg
+            artifact: SLTE-macOS-arm64
+            files: desktopApp/build/compose/binaries/main/dmg/*.dmg
+          - name: macOS Intel
+            os: macos-15-intel
+            task: packageDmg
+            artifact: SLTE-macOS-x64
+            files: desktopApp/build/compose/binaries/main/dmg/*.dmg
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: "17"
+          cache: gradle
+      - name: Build installer
+        shell: bash
+        env:
+          SLTE_API_BASE_URL: ${{ vars.SLTE_API_BASE_URL }}
+          SLTE_API_TYPE: ${{ vars.SLTE_API_TYPE }}
+          SLTE_REMOTE_CONFIG_URLS: ${{ vars.SLTE_REMOTE_CONFIG_URLS }}
+          SLTE_ALLOWED_DOMAINS: ${{ vars.SLTE_ALLOWED_DOMAINS }}
+        run: ./gradlew --configure-on-demand :desktopApp:${{ matrix.task }}
+      - uses: actions/upload-artifact@v4
+        with:
+          name: ${{ matrix.artifact }}
+          path: ${{ matrix.files }}
+          if-no-files-found: error
