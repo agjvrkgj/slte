@@ -3,10 +3,10 @@
 # SLTE
 
 [![许可证](https://img.shields.io/badge/许可证-GPL--3.0-blue?style=flat-square)](LICENSE)
-[![平台](https://img.shields.io/badge/平台-Android-green?style=flat-square)](README.md)
+[![平台](https://img.shields.io/badge/平台-Android%20%7C%20Windows%20%7C%20macOS-green?style=flat-square)](README.md)
 [![内核](https://img.shields.io/badge/内核-mihomo-9cf?style=flat-square)](https://github.com/MetaCubeX/mihomo)
 
-**基于 mihomo 内核的轻量级 Android 代理客户端，支持 XiaoV2b / Xboard 面板**
+**基于 mihomo 内核的轻量级跨平台代理客户端，支持 XiaoV2b / Xboard 面板**
 
 </div>
 
@@ -14,7 +14,9 @@
 
 ## 简介
 
-基于 [mihomo](https://github.com/MetaCubeX/mihomo/tree/Alpha) 内核构建的 Android 代理客户端，支持 XiaoV2b / Xboard 面板。
+基于 [mihomo](https://github.com/MetaCubeX/mihomo/tree/Alpha) 内核构建的 Android、Windows 和 macOS 代理客户端，支持 XiaoV2b / Xboard 面板。
+
+桌面端源码与构建说明见 [`desktopApp/README.md`](desktopApp/README.md)。
 
 ## 开发环境
 
